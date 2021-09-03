@@ -81,7 +81,7 @@ class FilmController extends Controller
                 'end' => $timestamp_end
             ];
 
-        	$id++;
+            $id++;
         }
 
         // Теперь сохраняем фильм в базе данных

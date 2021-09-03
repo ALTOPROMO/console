@@ -27,7 +27,7 @@ class NewsController extends Controller
 
         // Объединяем массивы из адаптеров
         $news = array_merge(
-        	$almprok,
+            $almprok,
             $almet
         );
 
