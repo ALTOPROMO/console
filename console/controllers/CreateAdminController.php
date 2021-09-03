@@ -1,0 +1,34 @@
+<?php
+namespace console\controllers;
+
+use yii\console\Controller;
+use yii\console\ExitCode;
+
+use admin\models\Admin;
+
+class CreateAdminController extends Controller
+{
+	public $username;
+    public $email;
+    public $password;
+
+    public function actionIndex($username, $email, $password)
+    {
+    	echo 'Создание нового аккаунта администратора с именем ' . $username .  PHP_EOL;
+    	echo "\r\n";
+
+    	$admin = new Admin();
+    	$admin->username = $username;
+        $admin->email = $email;
+        $admin->status = 10;
+        $admin->setPassword($password);
+        $admin->generateAuthKey();
+        $isSaveAdmin = $admin->save();
+
+        if($isSaveAdmin) {
+        	echo "Аккаунт успешно создан! Не забудьте сохранить данные для входа.\r\n";
+        } else {
+        	echo "Fail\r\n";
+        }
+    }
+}
