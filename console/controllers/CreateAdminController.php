@@ -11,7 +11,7 @@ use admin\models\Admin;
  */
 class CreateAdminController extends Controller
 {
-	public $username;
+    public $username;
     public $email;
     public $password;
 
@@ -39,9 +39,9 @@ class CreateAdminController extends Controller
         $isSaveAdmin = $admin->save();
 
         if($isSaveAdmin) {
-        	echo "Аккаунт успешно создан! Не забудьте сохранить данные для входа.\r\n";
+            echo "Аккаунт успешно создан! Не забудьте сохранить данные для входа.\r\n";
         } else {
-        	echo "Fail\r\n";
+            echo "Fail\r\n";
         }
     }
 }
