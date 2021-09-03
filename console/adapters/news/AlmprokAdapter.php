@@ -7,10 +7,15 @@ use PhpQuery\PhpQuery as phpQuery;
 PhpQuery::use_function(__NAMESPACE__);
 
 /**
- * Парсел для сайта Альметьевской городской прокуратуры https://almprok.ru/
+ * Парсер для сайта Альметьевской городской прокуратуры https://almprok.ru/
  */
 class AlmprokAdapter
 {   
+    /**
+     * Метод парсит сайт https://almprok.ru/.
+     * 
+     * @return array
+     */
     public static function parse()
     {
         $page = file_get_contents('https://almprok.ru/');
@@ -22,12 +27,12 @@ class AlmprokAdapter
         $news = [];
         $id = 0;
         foreach ($links as $item) {
-        	$item = pq($item);
+            $item = pq($item);
 
-        	$news[$id]['source'] = $item->attr('href');
+            $news[$id]['source'] = $item->attr('href');
             $news[$id]['name'] = $item->find('p')->html();
 
-            // Работаем с детальной
+            // Работаем с детальной страницей новости.
             $raw_detail = file_get_contents($news[$id]['source']);
             $doc_detail = phpQuery::newDocument($raw_detail);
 

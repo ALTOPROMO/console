@@ -2,23 +2,30 @@
 
 namespace console\controllers;
 
-use common\models\NewsCategory;
 use Yii;
+use common\models\NewsCategory;
 use yii\console\Controller;
 use common\models\News;
 use Phpml\ModelManager;
-
-// Адаптеры для новостей
 use console\adapters\news\AlmprokAdapter;
 use console\adapters\news\AlmetAdapter;
 
+/**
+ * Класс управляет "сырыми" новостями.
+ */
 class NewsController extends Controller
 {   
+    /**
+     * Данный метод используется для получения списков новостей из адаптеров и его сохранения в базе данных. Вызывается по cron.
+     * 
+     * @return null
+     */
     public function actionIndex()
     {
         $almprok = AlmprokAdapter::parse();
         $almet = AlmetAdapter::parse();
 
+        // Объединяем массивы из адаптеров
         $news = array_merge(
         	$almprok,
             $almet
@@ -26,12 +33,12 @@ class NewsController extends Controller
 
         $counter = 0;
         foreach ($news as $item) {
-            // TODO: вынести функционал в сервис NewsService
-        	if(!News::find()->where(['name' => $item['name']])->one()) {
-        		$el = new News();
+            if(!News::find()->where(['name' => $item['name']])->one()) {
+                $el = new News();
 
-        		$el->name = $item['name'];
+                $el->name = $item['name'];
 
+                // Если у новости есть изображение, скачиваем и сохраняем его
                 if(isset($item['image']) && $item['image'] != null) {
                     $image = $item['image'];
 
@@ -65,23 +72,15 @@ class NewsController extends Controller
                 $el->category_id = $category ? $category->id : '';
                 $el->views = 0;
                 $el->image = $image;
-        		$el->text = $item['text'];
-        		$el->source = $item['source'];
+                $el->text = $item['text'];
+                $el->source = $item['source'];
                 $el->created_at = time();
                 $el->updated_at = time();
 
-        		$el->save();
+                $el->save();
 
-               /* $item = NewsService::getById($el->id);
-                $main_public = VkService::getMainPublic();
-                $result_vk_send = VkService::sendNews($item, $main_public->public_id);
-
-                if($result_vk_send) {
-                    echo "Добавили новость в основное сообщество.";
-                }*/
-
-        		$counter++;
-        	}
+                $counter++;
+            }
         }
 
         echo "Готово, всего спарсили " . $counter . " новостей.";

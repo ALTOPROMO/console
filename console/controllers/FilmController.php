@@ -8,36 +8,45 @@ use PhpQuery\PhpQuery as phpQuery;
 
 PhpQuery::use_function(__NAMESPACE__);
 
+/**
+ * Класс парсит сайт с афишей https://e-almet.ru 
+ */
 class FilmController extends Controller
 {
+    /**
+     * Метод парсит раздел сайта https://e-almet.ru/afisha/cinema/
+     * 
+     * @return null
+     */
     public function actionIndex()
     {
         $page = file_get_contents('https://e-almet.ru/afisha/cinema/');
 
         $doc = phpQuery::newDocument($page);
 
+        // Список фильмов
         $list = pq($doc)->find('table.sv_tabl:eq(0) tr:gt(1)');
 
         $films = [];
         $id = 0;
         foreach ($list as $film) {
-        	$film = pq($film);
+            $film = pq($film);
 
-        	// Название фильма
-        	$films[$id]['name'] = $film->find('td.zf2 a')->html();
+            // Название фильма
+            $films[$id]['name'] = $film->find('td.zf2 a')->html();
 
-        	// Жанр
-        	$films[$id]['genre'] = $film->find('td.zf2 span')->html();
+            // Жанр
+            $films[$id]['genre'] = $film->find('td.zf2 span')->html();
 
-        	// Сеансы
-        	$films[$id]['sessions'] = $film->find('td:eq(2)')->html();
+            // Сеансы
+            $films[$id]['sessions'] = $film->find('td:eq(2)')->html();
 
-        	$doc_detail_link = $film->find('td.zf2 a')->attr("href");
+            $doc_detail_link = $film->find('td.zf2 a')->attr("href");
 
-        	$page_detail = file_get_contents($doc_detail_link);
-        	$doc_detail = phpQuery::newDocument($page_detail);
+            $page_detail = file_get_contents($doc_detail_link);
+            $doc_detail = phpQuery::newDocument($page_detail);
 
-        	$concrete_film = pq($doc_detail);
+            $concrete_film = pq($doc_detail);
 
             $table_detail = $concrete_film->find('#mtx table tr');
 
@@ -75,8 +84,7 @@ class FilmController extends Controller
         	$id++;
         }
 
-        var_dump($films); exit();
-
+        // Теперь сохраняем фильм в базе данных
         foreach ($films as $film) {
             $haveFilm = Film::find()->where(['name' => $film['name']])->one();
 

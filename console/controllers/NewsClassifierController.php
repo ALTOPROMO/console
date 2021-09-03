@@ -2,10 +2,9 @@
 
 namespace console\controllers;
 
-use Phpml\ModelManager;
 use Yii;
+use Phpml\ModelManager;
 use yii\console\Controller;
-
 use Phpml\Dataset\CsvDataset;
 use Phpml\Dataset\ArrayDataset;
 use Phpml\FeatureExtraction\TokenCountVectorizer;
@@ -16,8 +15,16 @@ use Phpml\Metric\Accuracy;
 use Phpml\Classification\SVC;
 use Phpml\SupportVectorMachine\Kernel;
 
+/**
+ * Класс управляет ML моделью.
+ */
 class NewsClassifierController extends Controller
 {
+    /**
+     * Метод обучает модель на основании датасета и сохраняет модель в подпапку ai/. 
+     * 
+     * @return null 
+     */
     public function actionGenerate()
     {
         $ai_path = Yii::getAlias("@ai");

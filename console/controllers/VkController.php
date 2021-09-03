@@ -7,8 +7,16 @@ use yii\console\Controller;
 use common\services\VkService;
 use common\services\NewsService;
 
+/**
+ * Класс занимается работой с API ВКонтакте.
+ */
 class VkController extends Controller
 {
+    /**
+     * Метод вызывается по cron и рассылает в сообщества ВКонтакте новости.
+     * 
+     * @return null
+     */
     public function actionSendPopular()
     {
         $news = NewsService::getOneViewed();
@@ -17,6 +25,7 @@ class VkController extends Controller
             exit("На сегодня нет популярных новостей");
         }
 
+        // Получаем список добавленных сообществ в систему
         $publics = VkService::getPublics();
 
         $counter = 0;
